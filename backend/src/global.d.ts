@@ -8,11 +8,11 @@ declare global {
       HOST: string;
       DB_URI: string;
       JWT_SECRET: string;
-      REFRESH_JWT_SECRET: string;
+      PUBLIC_KEY: string;
     }
   }
 
-  // namespace Express {
-  //   interface User extends IUser {}
-  // }
+  namespace Express {
+    interface User extends IUser {}
+  }
 }
