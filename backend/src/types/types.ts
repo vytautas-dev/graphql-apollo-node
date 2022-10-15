@@ -8,6 +8,14 @@ export interface IUser extends Document {
   token: string;
 }
 
+export interface IRegisterInput extends Document {
+  registerInput: IUser;
+}
+
+export interface ILoginInput extends Document {
+  loginInput: IUser;
+}
+
 export enum EGenreType {
   Fiction = "fiction",
   Nonfiction = "nonfiction",
@@ -27,4 +35,15 @@ export interface IBook extends Document {
 
 export interface IBookInput extends IBook {
   bookInput: IBook;
+}
+
+export interface IAuth extends Document {
+  isAuth: boolean;
+  userId: string;
+  token: string;
+}
+
+export interface IBlackList extends Document {
+  token: string;
+  expireAt: Date;
 }

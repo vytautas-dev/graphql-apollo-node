@@ -40,7 +40,7 @@ const typeDefs = gql`
   }
 
   """
-  Login inputs
+  Login input
   """
   input LoginInput {
     email: String
@@ -52,6 +52,15 @@ const typeDefs = gql`
   }
 
   """
+  Register input
+  """
+  input RegisterInput {
+    username: String
+    email: String
+    password: String
+  }
+
+  """
   Queries
   """
   type Query {
@@ -60,16 +69,18 @@ const typeDefs = gql`
     booksByUserId(_id: ID!): [Book]
     users: [User]
     user(_id: ID!): User
-    login(loginInput: LoginInput): LoginReturnType
+    loginUser(loginInput: LoginInput): LoginReturnType
   }
 
   """
   Mutations
   """
   type Mutation {
+    registerUser(registerInput: RegisterInput): User
+    logoutUser: Boolean
     createBook(bookInput: BookInput): Book
-    deleteBook(_id: ID!): Boolean
-    updateBook(_id: ID!, bookInput: BookInput): Boolean
+    deleteBook(_id: ID!): Book
+    updateBook(_id: ID!, bookInput: BookInput): Book
   }
 `;
 
