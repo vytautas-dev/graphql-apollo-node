@@ -1,17 +1,19 @@
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import permissions from "./utils/permissions";
 import cors from "cors";
 import "dotenv/config";
 import mongoose from "mongoose";
 import typeDefs from "./typedefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
 import Auth from "./utils/verifyToken";
+import { applyMiddleware } from "graphql-middleware";
 
 //config variables
 const port = process.env.PORT;
 const host = process.env.HOST;
 const dbUri = process.env.DB_URI;
-const jwtSecret = process.env.JWT_SECRET;
 
 const app = express();
 
@@ -36,8 +38,10 @@ const startServer = async () => {
 
   //apollo server
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema: applyMiddleware(
+      makeExecutableSchema({ typeDefs, resolvers }),
+      permissions
+    ),
     context: Auth,
   });
 
