@@ -11,6 +11,7 @@ import Auth from "./utils/verifyToken";
 const port = process.env.PORT;
 const host = process.env.HOST;
 const dbUri = process.env.DB_URI;
+const jwtSecret = process.env.JWT_SECRET;
 
 const app = express();
 
@@ -43,7 +44,6 @@ const startServer = async () => {
   await server.start();
   server.applyMiddleware({ app, path: "/graphql" });
 
-  // app.use(verifyToken);
   app.listen(port, host, () =>
     console.log(`Server is running at http//${host}:${port}`)
   );

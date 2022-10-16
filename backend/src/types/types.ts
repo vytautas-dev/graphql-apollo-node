@@ -5,7 +5,7 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
-  token: string;
+  isAdmin: boolean;
 }
 
 export interface IRegisterInput extends Document {
@@ -41,6 +41,7 @@ export interface IAuth extends Document {
   isAuth: boolean;
   userId: string;
   token: string;
+  isAdmin: boolean;
 }
 
 export interface IBlackList extends Document {

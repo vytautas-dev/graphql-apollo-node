@@ -31,5 +31,10 @@ export default async (request: any) => {
   if (!!!decodeToken) return { isAuth: false };
 
   // token decoded successfully, and extracted data
-  return { isAuth: true, userId: decodeToken.id, token: tokenFromHeader };
+  return {
+    isAuth: true,
+    userId: decodeToken.id,
+    token: tokenFromHeader,
+    isAdmin: decodeToken.isAdmin,
+  };
 };

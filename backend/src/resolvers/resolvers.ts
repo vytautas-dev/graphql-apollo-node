@@ -25,21 +25,36 @@ const jwtSecret = process.env.JWT_SECRET;
 const resolvers = {
   Query: {
     // Books
-    async book<T>(parent: T, args: IBook) {
+    async book<T>(parent: T, args: IBook, { isAuth, isAdmin }: IAuth) {
+      if (!isAuth || !isAdmin) {
+        throw new ApolloError("Unauthorized");
+      }
       return Book.findById(args._id);
     },
-    async books() {
+    async books<T>(parent: T, args: T, { isAuth, isAdmin }: IAuth) {
+      if (!isAuth || !isAdmin) {
+        throw new ApolloError("Unauthorized");
+      }
       return Book.find();
     },
-    async booksByUserId<T>(parent: T, args: IBook) {
+    async booksByUserId<T>(parent: T, args: IBook, { isAuth }: IAuth) {
+      if (!isAuth) {
+        throw new ApolloError("Unauthorized");
+      }
       return Book.find(args.user);
     },
 
     // Users
-    async users() {
+    async users<T>(parent: T, args: T, { isAuth, isAdmin }: IAuth) {
+      if (!isAuth || !isAdmin) {
+        throw new ApolloError("Unauthorized");
+      }
       return User.find();
     },
-    async user<T>(parent: T, args: IUser) {
+    async user<T>(parent: T, args: IUser, { isAuth, isAdmin }: IAuth) {
+      if (!isAuth || !isAdmin) {
+        throw new ApolloError("Unauthorized");
+      }
       return User.findById(args._id);
     },
 
@@ -51,9 +66,10 @@ const resolvers = {
       const user = await User.findOne({ email });
       if (!user) throw new ApolloError("User not exists");
       const id = user._id;
+      const isAdmin = user.isAdmin;
       const isValid = await validPassword(password, user!.password);
       if (isValid) {
-        const token = jwt.sign({ id }, jwtSecret, {
+        const token = jwt.sign({ id, isAdmin }, jwtSecret, {
           algorithm: "HS256",
           expiresIn: "1d",
         });
@@ -111,6 +127,8 @@ const resolvers = {
       }
       return Book.findByIdAndUpdate(_id, bookInput);
     },
+
+    // Logout User
     async logoutUser<T>(parent: T, args: T, { isAuth, token }: IAuth) {
       try {
         await new TokensBlackList({ token }).save();
