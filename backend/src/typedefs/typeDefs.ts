@@ -63,7 +63,9 @@ const typeDefs = `#graphql
   type Query {
     book(_id: ID!): Book
     books: [Book]
+    someBooks(limit: Int!, offset: Int!): [Book]
     booksByUserId(_id: ID!): [Book]
+    someBooksByUserId(_id: ID!, limit: Int!, offset: Int!): [Book]
     users: [User]
     user(_id: ID!): User
   }

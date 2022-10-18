@@ -25,7 +25,7 @@ export enum EGenreType {
   Folktale = "folktale",
 }
 
-export interface IBook extends Document {
+export interface IBook extends Document, TPaginationInput {
   _id: Types.ObjectId;
   user: Types.ObjectId;
   author: string;
@@ -45,11 +45,7 @@ export interface IAuth extends Document {
   isAdmin: boolean;
 }
 
-export interface IBlackList extends Document {
-  token: string;
-  expireAt: Date;
-}
-
-export interface IGetTokenFromRequest extends Request {
-  authorization: string;
+export interface TPaginationInput {
+  limit: number;
+  offset: number;
 }

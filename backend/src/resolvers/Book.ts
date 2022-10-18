@@ -1,4 +1,4 @@
-import { IAuth, IBook, IBookInput } from "../types/types";
+import { IAuth, IBook, IBookInput, TPaginationInput } from "../types/types";
 import Book from "../models/Book";
 import { createAndUpdateBookValidateSchema } from "../validateSchemas/Book";
 import { GraphQLError } from "graphql/index";
@@ -12,8 +12,22 @@ export const books = async () => {
   return Book.find();
 };
 
+export const someBooks = async <T>(
+  parent: T,
+  { limit, offset }: TPaginationInput
+) => {
+  return Book.find().skip(offset).limit(limit);
+};
+
 export const booksByUserId = async <T>(parent: T, args: IBook) => {
   return Book.find({ user: args.user });
+};
+
+export const someBooksByUserId = async <T>(
+  parent: T,
+  { user, limit, offset }: IBook
+) => {
+  return Book.find({ user }).skip(offset).limit(limit);
 };
 
 //Mutations

@@ -18,6 +18,7 @@ export default shield({
   Query: {
     book: and(isAuthenticated, isAdmin),
     books: and(isAuthenticated, isAdmin),
+    someBooks: and(isAuthenticated, isAdmin),
     booksByUserId: isAuthenticated,
     users: and(isAuthenticated, isAdmin),
     user: and(isAuthenticated, isAdmin),

@@ -1,11 +1,13 @@
 import { EGenreType } from "../types/types";
 import {
   books,
+  someBooks,
   book,
   booksByUserId,
   createBook,
   deleteBook,
   updateBook,
+  someBooksByUserId,
 } from "./Book";
 import { users, user, loginUser, registerUser, logoutUser } from "./User";
 
@@ -14,8 +16,9 @@ const resolvers = {
     // Books
     book,
     books,
+    someBooks,
     booksByUserId,
-
+    someBooksByUserId,
     // Users
     users,
     user,
