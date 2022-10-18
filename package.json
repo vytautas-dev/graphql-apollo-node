@@ -24,7 +24,6 @@
     "@types/node": "^18.8.5"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.0",
     "@apollo/server": "^4.0.0",
     "@graphql-tools/schema": "^9.0.4",
     "bcrypt": "^5.1.0",
