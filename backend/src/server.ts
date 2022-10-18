@@ -9,7 +9,7 @@ import cors from "cors";
 import session from "express-session";
 import "dotenv/config";
 import mongoose from "mongoose";
-import typeDefs from "./typedefs/typeDefs";
+import { typeDefs } from "./typedefs/typeDefs";
 import resolvers from "./resolvers/resolvers";
 import { json } from "body-parser";
 import permissions from "./helpers/permissions";

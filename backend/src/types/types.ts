@@ -1,5 +1,4 @@
 import { Document, Types } from "mongoose";
-import { Request } from "express";
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -9,11 +8,11 @@ export interface IUser extends Document {
   isAdmin: boolean;
 }
 
-export interface IRegisterInput extends Document {
+export interface IRegisterInput {
   registerInput: IUser;
 }
 
-export interface ILoginInput extends Document {
+export interface ILoginInput {
   loginInput: IUser;
 }
 
@@ -36,13 +35,6 @@ export interface IBook extends Document, TPaginationInput {
 
 export interface IBookInput extends IBook {
   bookInput: IBook;
-}
-
-export interface IAuth extends Document {
-  isAuth: boolean;
-  userId: string;
-  token: string;
-  isAdmin: boolean;
 }
 
 export interface TPaginationInput {
