@@ -1,6 +1,10 @@
 import User from "../models/User";
-import { userValidateSchema } from "../validateSchemas/User";
-import { IAuth, ILoginInput, IRegisterInput, IUser } from "../types/types";
+import { GraphQLError } from "graphql";
+import {
+  registerValidateSchema,
+  loginValidateSchema,
+} from "../validateSchemas/User";
+import { ILoginInput, IRegisterInput, IUser } from "../types/types";
 import "dotenv/config";
 import { validPassword } from "../helpers/validPassword";
 
@@ -13,13 +17,43 @@ export const user = async <T>(parent: T, args: IUser) => {
   return User.findById(args._id);
 };
 
+//Mutations
+export const registerUser = async <T>(
+  parent: T,
+  { registerInput: { username, email, password } }: IRegisterInput
+) => {
+  try {
+    await registerValidateSchema.validateAsync({
+      username,
+      email,
+      password,
+    });
+  } catch (err: any) {
+    return new GraphQLError(`${err.details[0].message}`);
+  }
+
+  const userExists = await User.findOne({ email });
+  if (userExists) console.log("User exists");
+
+  const user = await new User({ username, email, password });
+  return user.save();
+};
+
 export const loginUser = async <T>(
   parent: T,
   { loginInput: { email, password } }: ILoginInput,
   { req }: any
 ) => {
+  try {
+    await loginValidateSchema.validateAsync({
+      email,
+      password,
+    });
+  } catch (err: any) {
+    return new GraphQLError(`${err.details[0].message}`);
+  }
   const user = await User.findOne({ email });
-  if (!user) return console.log("Cannot find user");
+  if (!user) return new GraphQLError(`Cannot find a User`);
   const id = user._id;
   const isAdmin = user.isAdmin;
   const isValid = await validPassword(password, user!.password);
@@ -32,27 +66,8 @@ export const loginUser = async <T>(
 };
 
 export const logoutUser = async <T>(parent: T, args: T, { req }: any) => {
-  if (req.session) req.session.destroy((err: any) => {});
-  console.log(req.session);
-};
-
-//Mutations
-export const registerUser = async <T>(
-  parent: T,
-  { registerInput: { username, email, password } }: IRegisterInput
-) => {
-  const value = await userValidateSchema.validate({
-    username,
-    email,
-    password,
-  });
-  if (value.error) {
-    return console.log("Register error");
-  }
-
-  const userExists = await User.findOne({ email });
-  if (userExists) console.log("User exists");
-
-  const user = await new User({ username, email, password });
-  return user.save();
+  if (req.session)
+    req.session.destroy((err: any) => {
+      return new GraphQLError(err);
+    });
 };

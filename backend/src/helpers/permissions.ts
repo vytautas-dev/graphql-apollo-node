@@ -17,16 +17,16 @@ const isBookOwnToUser = rule()(async (parent, args, { req }) => {
 export default shield({
   Query: {
     book: and(isAuthenticated, isAdmin),
-    books: and(isAuthenticated),
+    books: and(isAuthenticated, isAdmin),
     booksByUserId: isAuthenticated,
     users: and(isAuthenticated, isAdmin),
     user: and(isAuthenticated, isAdmin),
-    logoutUser: isAuthenticated,
   },
 
   Mutation: {
     createBook: isAuthenticated,
     deleteBook: and(isAuthenticated, isBookOwnToUser),
     updateBook: and(isAuthenticated, isBookOwnToUser),
+    logoutUser: isAuthenticated,
   },
 });

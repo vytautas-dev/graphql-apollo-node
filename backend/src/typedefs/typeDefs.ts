@@ -1,12 +1,10 @@
-import { gql } from "@apollo/client/core";
-
-const typeDefs = gql`
+const typeDefs = `#graphql
   """
   User types
   """
   type User {
-    _id: ID
-    username: String
+    _id: ID 
+    username: String 
     email: String
     password: String
   }
@@ -32,7 +30,6 @@ const typeDefs = gql`
   }
 
   input BookInput {
-    user: ID!
     author: String!
     title: String!
     description: String!
@@ -43,7 +40,7 @@ const typeDefs = gql`
   Login input
   """
   input LoginInput {
-    email: String
+    email: String 
     password: String
   }
 
@@ -56,7 +53,7 @@ const typeDefs = gql`
   """
   input RegisterInput {
     username: String
-    email: String
+    email: String 
     password: String
   }
 
@@ -69,8 +66,6 @@ const typeDefs = gql`
     booksByUserId(_id: ID!): [Book]
     users: [User]
     user(_id: ID!): User
-    loginUser(loginInput: LoginInput): Boolean
-    logoutUser: Boolean
   }
 
   """
@@ -81,6 +76,8 @@ const typeDefs = gql`
     createBook(bookInput: BookInput): Book
     deleteBook(_id: ID!): Book
     updateBook(_id: ID!, bookInput: BookInput): Book
+    loginUser(loginInput: LoginInput): Boolean
+    logoutUser: Boolean
   }
 `;
 
