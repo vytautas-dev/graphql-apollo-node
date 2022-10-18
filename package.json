@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only backend/src/server.ts"
+    "dev": "node_modules/.bin/ts-node-dev --respawn --transpile-only backend/src/server.ts"
   },
   "author": "",
   "license": "ISC",
@@ -18,15 +18,15 @@
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.14",
     "@types/express-jwt": "^6.0.4",
+    "@types/express-session": "^1.17.5",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^18.8.5"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.0",
     "@apollo/server": "^4.0.0",
     "@graphql-tools/schema": "^9.0.4",
-    "apollo-server": "^3.10.3",
-    "apollo-server-express": "^3.10.3",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.8",
@@ -36,9 +36,12 @@
     "express": "^4.18.2",
     "express-graphql": "^0.12.0",
     "express-jwt": "^7.7.5",
+    "express-session": "^1.17.3",
     "graphql": "^15.8.0",
+    "graphql-constraint-directive": "^2.3.0",
     "graphql-middleware": "6.1.33",
     "graphql-shield": "7.6.2",
+    "joi": "^17.6.3",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
     "mongoose": "^6.6.5",

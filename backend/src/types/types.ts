@@ -1,4 +1,5 @@
 import { Document, Types } from "mongoose";
+import { Request } from "express";
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -47,4 +48,8 @@ export interface IAuth extends Document {
 export interface IBlackList extends Document {
   token: string;
   expireAt: Date;
+}
+
+export interface IGetTokenFromRequest extends Request {
+  authorization: string;
 }

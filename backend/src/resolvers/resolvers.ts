@@ -20,12 +20,12 @@ const resolvers = {
     users,
     user,
     loginUser,
+    logoutUser,
   },
 
   Mutation: {
     // Users
     registerUser,
-    logoutUser,
 
     // Books
     createBook,

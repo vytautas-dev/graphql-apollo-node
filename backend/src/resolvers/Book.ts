@@ -11,7 +11,7 @@ export const books = async () => {
 };
 
 export const booksByUserId = async <T>(parent: T, args: IBook) => {
-  return Book.find(args.user);
+  return Book.find({ user: args.user });
 };
 
 //Mutations

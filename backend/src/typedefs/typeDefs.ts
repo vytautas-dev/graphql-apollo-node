@@ -1,4 +1,4 @@
-import { gql } from "apollo-server";
+import { gql } from "@apollo/client/core";
 
 const typeDefs = gql`
   """
@@ -69,7 +69,8 @@ const typeDefs = gql`
     booksByUserId(_id: ID!): [Book]
     users: [User]
     user(_id: ID!): User
-    loginUser(loginInput: LoginInput): LoginReturnType
+    loginUser(loginInput: LoginInput): Boolean
+    logoutUser: Boolean
   }
 
   """
@@ -77,7 +78,6 @@ const typeDefs = gql`
   """
   type Mutation {
     registerUser(registerInput: RegisterInput): User
-    logoutUser: Boolean
     createBook(bookInput: BookInput): Book
     deleteBook(_id: ID!): Book
     updateBook(_id: ID!, bookInput: BookInput): Book

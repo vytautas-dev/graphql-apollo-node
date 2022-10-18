@@ -9,6 +9,7 @@ declare global {
       DB_URI: string;
       JWT_SECRET: string;
       PUBLIC_KEY: string;
+      SESSION_SECRET: string;
     }
   }
 
