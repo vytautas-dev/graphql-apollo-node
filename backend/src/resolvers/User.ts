@@ -7,6 +7,9 @@ import {
 import { ILoginInput, IRegisterInput, IUser } from "../types/types";
 import "dotenv/config";
 import { validPassword } from "../helpers/validPassword";
+import { PubSub } from "graphql-subscriptions";
+
+const pubsub = new PubSub();
 
 export const userResolvers = {
   Query: {
@@ -35,9 +38,10 @@ export const userResolvers = {
       }
       const userExists = await User.findOne({ email });
       if (userExists) console.log("User exists");
-
       const user = await new User({ username, email, password });
-      return user.save();
+      await user.save();
+      await pubsub.publish("USER_CREATED", { newUserCreated: user });
+      return user;
     },
 
     async loginUser<T>(
@@ -71,6 +75,12 @@ export const userResolvers = {
           return new GraphQLError(err);
         });
       return true;
+    },
+  },
+
+  Subscription: {
+    newUserCreated: {
+      subscribe: () => pubsub.asyncIterator(["USER_CREATED"]),
     },
   },
 };

@@ -28,5 +28,8 @@ type Mutation {
     logoutUser: Boolean
 }
 
+type Subscription {
+    newUserCreated(registerInput: RegisterInput ): User
+}
 
    `;
