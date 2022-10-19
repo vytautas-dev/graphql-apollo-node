@@ -27,4 +27,6 @@ type Mutation {
     loginUser(loginInput: LoginInput): Boolean
     logoutUser: Boolean
 }
+
+
    `;

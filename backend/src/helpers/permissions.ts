@@ -1,5 +1,5 @@
-import { and, rule, shield } from "graphql-shield";
-import Book from "../models/Book";
+import { and, rule, shield } from 'graphql-shield';
+import Book from '../models/Book';
 
 const isAuthenticated = rule()(async (parent, args, { req }) => {
   return req.session.isAuth;
@@ -17,7 +17,7 @@ const isBookOwnToUser = rule()(async (parent, args, { req }) => {
 export default shield({
   Query: {
     book: and(isAuthenticated, isAdmin),
-    books: and(isAuthenticated, isAdmin),
+    // books: and(isAuthenticated, isAdmin),
     someBooks: and(isAuthenticated, isAdmin),
     booksByUserId: isAuthenticated,
     users: and(isAuthenticated, isAdmin),
