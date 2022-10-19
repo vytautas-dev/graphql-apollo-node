@@ -36,4 +36,8 @@ enum EGenreType {
     Poetry
     Folktale
 }
+
+type Subscription {
+    newBookCreated: Book
+}
     `;

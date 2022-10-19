@@ -29,7 +29,7 @@ type Mutation {
 }
 
 type Subscription {
-    newUserCreated(registerInput: RegisterInput ): User
+    newUserCreated: User
 }
 
    `;

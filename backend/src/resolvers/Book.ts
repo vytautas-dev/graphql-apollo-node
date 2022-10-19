@@ -7,6 +7,9 @@ import {
 import Book from "../models/Book";
 import { createAndUpdateBookValidateSchema } from "../validateSchemas/Book";
 import { GraphQLError } from "graphql/index";
+import { PubSub } from "graphql-subscriptions";
+
+const pubsub = new PubSub();
 
 export const bookResolvers = {
   Query: {
@@ -54,7 +57,9 @@ export const bookResolvers = {
         description,
         genre,
       });
-      return book.save();
+      await book.save();
+      await pubsub.publish("BOOK_CREATED", { newBookCreated: book });
+      return book;
     },
 
     async deleteBook<T>(parent: T, args: IBook) {
@@ -85,5 +90,11 @@ export const bookResolvers = {
     Drama: EGenreType.Drama,
     Poetry: EGenreType.Poetry,
     Folktale: EGenreType.Folktale,
+  },
+
+  Subscription: {
+    newBookCreated: {
+      subscribe: () => pubsub.asyncIterator(["BOOK_CREATED"]),
+    },
   },
 };
