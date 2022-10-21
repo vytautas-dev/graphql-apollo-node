@@ -1,5 +1,6 @@
 import {
   EGenreType,
+  ESortType,
   IBook,
   IBookInput,
   TPaginationInput,
@@ -7,7 +8,7 @@ import {
 import Book from "../models/Book";
 import { createAndUpdateBookValidateSchema } from "../validateSchemas/Book";
 import { GraphQLError } from "graphql/index";
-import { PubSub } from "graphql-subscriptions";
+import { PubSub, withFilter } from "graphql-subscriptions";
 
 const pubsub = new PubSub();
 
@@ -17,19 +18,31 @@ export const bookResolvers = {
       return Book.findById(args._id);
     },
 
-    async books() {
-      return Book.find();
+    async books<T>(parent: T, { bookInput }: IBookInput) {
+      const { author, title, description, genre, offset, limit, sort } =
+        bookInput;
+
+      let filteredInputs: IBookInput | {} = {};
+      const reduce = Object.keys({ author, title, description, genre }).reduce(
+        function (acc, key) {
+          return (filteredInputs = {
+            ...acc,
+            [key]: {
+              $regex: bookInput[key as keyof typeof bookInput] || "",
+              $options: "i",
+            },
+          });
+        },
+        {}
+      );
+
+      return Book.find(filteredInputs)
+        .sort({ createdAt: sort })
+        .skip(offset)
+        .limit(limit);
     },
 
-    async someBooks<T>(parent: T, { limit, offset }: TPaginationInput) {
-      return Book.find().skip(offset).limit(limit);
-    },
-
-    async booksByUserId<T>(parent: T, args: IBook) {
-      return Book.find({ user: args.user });
-    },
-
-    async someBooksByUserId<T>(parent: T, { user, limit, offset }: IBook) {
+    async booksByUserId<T>(parent: T, { user, limit, offset }: IBookInput) {
       return Book.find({ user }).skip(offset).limit(limit);
     },
   },
@@ -92,9 +105,19 @@ export const bookResolvers = {
     Folktale: EGenreType.Folktale,
   },
 
+  ESortType: {
+    Latest: ESortType.Latest,
+    Oldest: ESortType.Oldest,
+  },
+
   Subscription: {
     newBookCreated: {
-      subscribe: () => pubsub.asyncIterator(["BOOK_CREATED"]),
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(["BOOK_CREATED"]),
+        (payload, variables) => {
+          return payload.newBookCreated.genre === variables.genre;
+        }
+      ),
     },
   },
 };

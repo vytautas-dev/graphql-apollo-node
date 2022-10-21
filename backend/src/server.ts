@@ -16,6 +16,7 @@ import { resolvers } from "./resolvers/resolvers";
 import { json } from "body-parser";
 import permissions from "./helpers/permissions";
 import cookieParser from "cookie-parser";
+import MongoStore from "connect-mongo";
 
 //config variables
 const port = process.env.PORT;
@@ -54,10 +55,29 @@ const startApolloServer = async () => {
 
   const serverCleanup = useServer({ schema }, wsServer);
 
+  const setHttpPlugin = {
+    async requestDidStart() {
+      return {
+        async willSendResponse({ response }: any) {
+          response.http.headers.set("custom-header", "hello");
+
+          if (
+            response.body.kind === "single" &&
+            response.body.singleResult.errors?.[0]?.extensions?.code ===
+              "BAD_USER_INPUT"
+          ) {
+            response.http.status = 400;
+          }
+        },
+      };
+    },
+  };
+
   const server = new ApolloServer({
     schema,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
+      setHttpPlugin,
       {
         async serverWillStart() {
           return {
@@ -84,6 +104,9 @@ const startApolloServer = async () => {
     session({
       name: "mySession",
       secret: sessionSecret,
+      store: MongoStore.create({
+        mongoUrl: dbUri,
+      }),
       resave: true,
       saveUninitialized: false,
       cookie: {

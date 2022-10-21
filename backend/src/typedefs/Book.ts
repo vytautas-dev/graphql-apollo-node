@@ -9,24 +9,32 @@ type Book {
 }
 
 input BookInput {
-    author: String!
-    title: String!
-    description: String!
-    genre: EGenreType!
+    author: String
+    title: String
+    description: String
+    genre: EGenreType
+    offset: Int,
+    limit: Int,
+    sort: ESortType
+}
+
+input BookCreateInput {
+    author: String
+    title: String
+    description: String
+    genre: EGenreType
 }
 
 type Query {
     book(_id: ID!): Book
-    books: [Book]
-    someBooks(limit: Int!, offset: Int!): [Book]
-    booksByUserId(_id: ID!): [Book]
-    someBooksByUserId(_id: ID!, limit: Int!, offset: Int!): [Book]
+    books(bookInput: BookInput): [Book]
+    booksByUserId(_id: ID!, limit: Int!, offset: Int!): [Book]
 }
 
 type Mutation {
-    createBook(bookInput: BookInput): Book
+    createBook(bookInput: BookCreateInput): Book
     deleteBook(_id: ID!): Book
-    updateBook(_id: ID!, bookInput: BookInput): Book
+    updateBook(_id: ID!, bookInput: BookCreateInput): Book
 }
 
 enum EGenreType {
@@ -37,7 +45,14 @@ enum EGenreType {
     Folktale
 }
 
+
+enum ESortType {
+    Latest,
+    Oldest
+}
+
+
 type Subscription {
-    newBookCreated: Book
+    newBookCreated(genre: EGenreType!): Book
 }
     `;

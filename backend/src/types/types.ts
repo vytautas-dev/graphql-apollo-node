@@ -24,6 +24,11 @@ export enum EGenreType {
   Folktale = "folktale",
 }
 
+export enum ESortType {
+  Latest = 1,
+  Oldest = -1,
+}
+
 export interface IBook extends Document, TPaginationInput {
   _id: Types.ObjectId;
   user: Types.ObjectId;
@@ -31,13 +36,13 @@ export interface IBook extends Document, TPaginationInput {
   title: string;
   description: string;
   genre: EGenreType;
+  limit: number;
+  offset: number;
+  sort: ESortType;
 }
 
 export interface IBookInput extends IBook {
   bookInput: IBook;
 }
 
-export interface TPaginationInput {
-  limit: number;
-  offset: number;
-}
+export interface TPaginationInput {}
