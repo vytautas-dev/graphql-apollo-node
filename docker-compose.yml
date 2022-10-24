@@ -11,9 +11,13 @@ services:
 
   #Node API service
   api:
+    container_name: node_container
+    restart: always
     build: .
     ports:
       - "5000:5000"
+    volumes:
+      - .:/usr/src/app
     environment:
       NODE_ENV: development
       PORT: 5000

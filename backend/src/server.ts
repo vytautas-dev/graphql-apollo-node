@@ -28,7 +28,7 @@ const sessionSecret = process.env.SESSION_SECRET;
 mongoose
   .connect(dbUri)
   .then(() => {
-    console.log("DB connected");
+    console.log("DB connected!");
     startApolloServer();
   })
   .catch((error) => {

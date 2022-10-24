@@ -4,12 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node_modules/.bin/ts-node-dev --respawn --transpile-only backend/src/server.ts"
+    "dev": "node_modules/.bin/ts-node-dev --poll --respawn --transpile-only backend/src/server.ts"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/body-parser": "^1.19.2",
     "@types/config": "^3.3.0",
@@ -27,7 +26,6 @@
   "dependencies": {
     "@apollo/server": "^4.0.0",
     "@graphql-tools/schema": "^9.0.4",
-    "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.8",
     "connect-mongo": "^4.6.0",
