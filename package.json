@@ -21,6 +21,8 @@
     "@types/jsonwebtoken": "^8.5.9",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^18.8.5",
+    "@types/passport": "^1.0.11",
+    "@types/passport-google-oauth20": "^2.0.11",
     "@types/ws": "^8.5.3"
   },
   "dependencies": {
@@ -34,6 +36,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "googleapis": "^108.0.1",
     "graphql": "^16.6.0",
     "graphql-middleware": "6.1.33",
     "graphql-shield": "7.6.2",
@@ -41,6 +44,8 @@
     "graphql-ws": "^5.11.2",
     "joi": "^17.6.3",
     "mongoose": "^6.6.5",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
     "ts-node-dev": "^2.0.0",
     "ws": "^8.9.0"
   }

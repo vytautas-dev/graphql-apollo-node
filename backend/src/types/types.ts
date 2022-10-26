@@ -5,8 +5,17 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
+  refreshToken: string;
   isAdmin: boolean;
 }
+
+// export interface IGoogleUser extends Document {
+//   _id: Types.ObjectId;
+//   username: string;
+//   email: string;
+//   googleId: string;
+//   refreshToken: string;
+// }
 
 export interface IRegisterInput {
   registerInput: IUser;

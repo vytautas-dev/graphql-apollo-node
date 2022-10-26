@@ -10,6 +10,9 @@ declare global {
       JWT_SECRET: string;
       PUBLIC_KEY: string;
       SESSION_SECRET: string;
+      GOOGLE_CLIENT_ID: string;
+      GOOGLE_CLIENT_SECRET: string;
+      GOOGLE_OAUTH_REDIRECT_URL: string;
     }
   }
 

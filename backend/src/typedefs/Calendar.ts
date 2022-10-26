@@ -1,4 +1,4 @@
-export const typeCalender = `#graphql
+export const typeCalendar = `#graphql
 type Events {
 events: [String]
 }
@@ -6,6 +6,4 @@ events: [String]
 type Query {
     calendarEvents: Events
 }
-
-
 `;

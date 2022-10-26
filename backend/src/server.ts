@@ -1,6 +1,5 @@
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { applyMiddleware } from "graphql-middleware";
+import { schema, setHttpPlugin } from "./config";
 import { expressMiddleware } from "@apollo/server/express4";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
@@ -11,12 +10,13 @@ import cors from "cors";
 import session from "express-session";
 import "dotenv/config";
 import mongoose from "mongoose";
-import { typeDefs } from "./typedefs/typeDefs";
-import { resolvers } from "./resolvers/resolvers";
 import { json } from "body-parser";
-import permissions from "./helpers/permissions";
+
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
+import "./services/passport";
+import passport from "passport";
+import authRoutes from "./routes/auth";
 
 //config variables
 const port = process.env.PORT;
@@ -37,41 +37,15 @@ mongoose
   });
 
 const startApolloServer = async () => {
-  const schema = applyMiddleware(
-    makeExecutableSchema({
-      typeDefs,
-      resolvers,
-    }),
-    permissions
-  );
-
   const app = express();
   const httpServer = http.createServer(app);
 
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/",
+    path: "/graphql",
   });
 
   const serverCleanup = useServer({ schema }, wsServer);
-
-  const setHttpPlugin = {
-    async requestDidStart() {
-      return {
-        async willSendResponse({ response }: any) {
-          response.http.headers.set("custom-header", "hello");
-
-          if (
-            response.body.kind === "single" &&
-            response.body.singleResult.errors?.[0]?.extensions?.code ===
-              "BAD_USER_INPUT"
-          ) {
-            response.http.status = 400;
-          }
-        },
-      };
-    },
-  };
 
   const server = new ApolloServer({
     schema,
@@ -97,23 +71,30 @@ const startApolloServer = async () => {
   };
 
   app.use(
-    "/",
-    cors<cors.CorsRequest>(corsOptions),
-    json(),
-    cookieParser(),
     session({
       name: "mySession",
       secret: sessionSecret,
       store: MongoStore.create({
         mongoUrl: dbUri,
       }),
-      resave: true,
+      resave: false,
       saveUninitialized: false,
       cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24,
       },
-    }),
+    })
+  );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  app.use(
+    "/graphql",
+    cors<cors.CorsRequest>(corsOptions),
+    json(),
+    cookieParser(),
+    isLoggedIn,
     expressMiddleware(server, {
       context: async ({ req }: any) => ({
         req,
@@ -121,6 +102,18 @@ const startApolloServer = async () => {
     })
   );
 
+  //Google Auth
+  app.get("/", (req, res) => {
+    res.send('<a href="/auth/google">Auth with Google</a>');
+  });
+
+  app.use("/auth", authRoutes);
+
+  //check if user is auth
+  function isLoggedIn(req, res, next) {
+    req.user ? next() : res.sendStatus(401);
+  }
+
   await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
-  console.log(`🚀 Server ready at ${host}:${port}`);
+  console.log(`🚀 Server ready at ${host}:${port}/graphql`);
 };
