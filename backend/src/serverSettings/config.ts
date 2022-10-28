@@ -1,8 +1,8 @@
 import { applyMiddleware } from "graphql-middleware";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import { typeDefs } from "./typedefs/typeDefs";
-import { resolvers } from "./resolvers/resolvers";
-import permissions from "./helpers/permissions";
+import { typeDefs } from "../typedefs/typeDefs";
+import { resolvers } from "../resolvers/resolvers";
+import permissions from "../helpers/permissions";
 
 export const schema = applyMiddleware(
   makeExecutableSchema({

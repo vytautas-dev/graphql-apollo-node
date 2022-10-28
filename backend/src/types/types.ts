@@ -9,13 +9,24 @@ export interface IUser extends Document {
   isAdmin: boolean;
 }
 
-// export interface IGoogleUser extends Document {
-//   _id: Types.ObjectId;
-//   username: string;
-//   email: string;
-//   googleId: string;
-//   refreshToken: string;
-// }
+export interface IEvent {
+  summary: string;
+  organizer: string;
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+  status: string;
+  hangoutLink: string;
+}
+
+export interface IEventInput {
+  eventInput: IEvent;
+}
 
 export interface IRegisterInput {
   registerInput: IUser;
@@ -52,6 +63,10 @@ export interface IBook extends Document, TPaginationInput {
 
 export interface IBookInput extends IBook {
   bookInput: IBook;
+}
+
+export interface ISettings extends Document {
+  refreshToken: string;
 }
 
 export interface TPaginationInput {}

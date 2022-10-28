@@ -1,17 +1,18 @@
 import { google } from "googleapis";
-import { loadSavedCredentialsIfExist } from "../services/userAuth";
-
-const client = loadSavedCredentialsIfExist();
+import { IEventInput } from "../types/types";
+import { loadClientAuth } from "../services/oAuthClient";
 
 export const calendarResolvers = {
   Event: {
-    organizer: (calendar) => calendar.organizer.email,
-    start: (calendar) => calendar.start.dateTime,
-    end: (calendar) => calendar.end.dateTime,
+    organizer: (event) => event.organizer.email,
+    start: (event) => event.start.dateTime,
+    end: (event) => event.end.dateTime,
   },
   Query: {
     async calendarEvents<T>(parent: T, args: any, { req }: any) {
-      const calendar = google.calendar({ version: "v3", auth: client });
+      console.log(req.session);
+      const oauth2Client = await loadClientAuth();
+      const calendar = google.calendar({ version: "v3", auth: oauth2Client });
       const response = await calendar.events.list({
         calendarId: "primary",
         timeMin: new Date().toISOString(),
@@ -25,10 +26,11 @@ export const calendarResolvers = {
     },
   },
   Mutation: {
-    async addEvent<T>(parent: T, args: any, { req }: any) {
+    async addEvent<T>(parent: T, { eventInput }: IEventInput) {
       const { summary, organizer, start, end, status, hangoutLink } =
-        args.eventInput;
-      console.log(summary);
+        eventInput;
+
+      const oauth2Client = await loadClientAuth();
       const event = {
         summary: summary,
         organizer: {
@@ -45,7 +47,8 @@ export const calendarResolvers = {
         status: status,
         hangoutLink: hangoutLink,
       };
-      const calendar = google.calendar({ version: "v3", auth: client });
+      const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+
       calendar.events.insert(
         {
           auth: oauth2Client,
