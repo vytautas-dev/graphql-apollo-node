@@ -66,6 +66,7 @@ export const userResolvers = {
         req.session.userId = id;
         req.session.isAdmin = isAdmin;
         req.session.isAuth = true;
+        console.log(req.session);
         return true;
       }
     },

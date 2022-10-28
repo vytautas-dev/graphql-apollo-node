@@ -4,7 +4,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 import { ApolloServer } from "@apollo/server";
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import http from "http";
 import cors from "cors";
 import session from "express-session";
@@ -17,12 +17,20 @@ import MongoStore from "connect-mongo";
 import "./services/passport";
 import passport from "passport";
 import authRoutes from "./routes/auth";
+import { google } from "googleapis";
+import User from "./models/User";
 
 //config variables
 const port = process.env.PORT;
 const host = process.env.HOST;
 const dbUri = process.env.DB_URI;
 const sessionSecret = process.env.SESSION_SECRET;
+
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_OAUTH_REDIRECT_URL
+);
 
 //connect to DB
 mongoose
@@ -52,6 +60,7 @@ const startApolloServer = async () => {
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       setHttpPlugin,
+
       {
         async serverWillStart() {
           return {
@@ -65,11 +74,6 @@ const startApolloServer = async () => {
   });
   await server.start();
 
-  const corsOptions = {
-    origin: "https://studio.apollographql.com",
-    credentials: true,
-  };
-
   app.use(
     session({
       name: "mySession",
@@ -82,6 +86,8 @@ const startApolloServer = async () => {
       cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24,
+        secure: true,
+        sameSite: "none",
       },
     })
   );
@@ -89,15 +95,24 @@ const startApolloServer = async () => {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  const corsOptions = {
+    origin: "https://studio.apollographql.com",
+    credentials: true,
+  };
   app.use(
     "/graphql",
+    // isLoggedIn,
+    (req, res, next) => {
+      // console.log(req.user);
+      next();
+    },
     cors<cors.CorsRequest>(corsOptions),
     json(),
     cookieParser(),
-    isLoggedIn,
     expressMiddleware(server, {
       context: async ({ req }: any) => ({
         req,
+        reqUser: req.user,
       }),
     })
   );
@@ -109,8 +124,34 @@ const startApolloServer = async () => {
 
   app.use("/auth", authRoutes);
 
+  // app.get("/calendar", isLoggedIn, async (req: any, res: any) => {
+  //   // const user = await User.findOne({id: req.session.passport.user})
+  //
+  //   const user = await User.findOne({ _id: req.session.passport.user });
+  //   const refreshToken = user!.refreshToken;
+  //
+  //   // console.log("user", user);
+  //   // console.log("token", refreshToken);
+  //
+  //   oauth2Client.setCredentials({ refresh_token: refreshToken });
+  //   const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+  //
+  //   const response = await calendar.events.list({
+  //     calendarId: "primary",
+  //     timeMin: new Date().toISOString(),
+  //     maxResults: 2,
+  //     singleEvents: true,
+  //     orderBy: "startTime",
+  //   });
+  //
+  //   // console.log(response);
+  //
+  //   const events = response.data.items;
+  //   console.log(events);
+  // });
+
   //check if user is auth
-  function isLoggedIn(req, res, next) {
+  function isLoggedIn(req: Request, res: Response, next: NextFunction) {
     req.user ? next() : res.sendStatus(401);
   }
 

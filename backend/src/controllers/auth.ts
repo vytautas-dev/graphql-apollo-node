@@ -1,4 +1,5 @@
 import passport from "passport";
+import { Request, Response } from "express";
 
 const authUser = passport.authenticate("google", {
   scope: ["profile", "email", "https://www.googleapis.com/auth/calendar"],
@@ -11,7 +12,7 @@ const callback = passport.authenticate("google", {
   failureMessage: "some error occured",
 });
 
-const logout = (req, res) => {
+const logout = (req: Request, res: Response) => {
   req.session.destroy(function (err) {
     console.log(err);
   });
