@@ -1,21 +1,23 @@
 import React from "react";
-import { GoogleLogin } from "@react-oauth/google";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import LoginSuccess from "./pages/LoginSuccess";
 
 function App() {
   return (
-    <div className="App">
-      <button>
-        <GoogleLogin
-          onSuccess={(credentialResponse) => {
-            console.log(credentialResponse);
-          }}
-          onError={() => {
-            console.log("Login Failed");
-          }}
-        />
-      </button>
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/auth/success" element={<LoginSuccess />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

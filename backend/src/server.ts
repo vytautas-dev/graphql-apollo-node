@@ -15,6 +15,7 @@ import passport from "passport";
 import authRoutes from "./routes/auth";
 import "./services/passport";
 import { expressSession } from "./services/session";
+import { isAuthenticated } from "./middlewares/isAuthenticated";
 
 //config variables
 const port = process.env.PORT;
@@ -69,24 +70,22 @@ const startApolloServer = async () => {
   app.use(passport.session());
 
   const corsOptions = {
-    origin: "https://studio.apollographql.com",
+    origin: ["http://localhost:3000", "https://studio.apollographql.com"],
+    methods: "GET, POST, PUT, DELETE",
     credentials: true,
   };
+
+  app.use(cors(corsOptions));
+
   app.use(
     "/graphql",
     // isLoggedIn,
-    cors<cors.CorsRequest>(corsOptions),
+    // cors<cors.CorsRequest>(corsOptions),
     json(),
     cookieParser(),
-    (req, res, next) => {
-      // console.log(req.session);
-      // console.log(req.user);
-      next();
-    },
     expressMiddleware(server, {
-      context: async ({ req }: any) => {
-        // console.log(req.user);
-        return { req };
+      context: async ({ req, res }: any) => {
+        return { req, res };
       },
     })
   );
@@ -96,12 +95,11 @@ const startApolloServer = async () => {
     res.send('<a href="/auth/google">Auth with Google</a>');
   });
 
-  app.use("/auth", authRoutes);
+  app.get("/protected", isAuthenticated, (req, res) => {
+    res.send("Congrats, you are authenticated");
+  });
 
-  //check if user is auth
-  // function isLoggedIn(req: Request, res: Response, next: NextFunction) {
-  //   req.user ? next() : res.sendStatus(401);
-  // }
+  app.use("/auth", authRoutes);
 
   await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
   console.log(`🚀 Server ready at ${host}:${port}/graphql`);
