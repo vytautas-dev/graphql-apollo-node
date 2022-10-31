@@ -11,13 +11,13 @@ const googleCallbackURL = process.env.GOOGLE_OAUTH_REDIRECT_URL;
 //what kind of data of the user should be stored in the session: req.session.passport.user = {}
 passport.serializeUser(function (user: any, done) {
   console.log("Serializing user:", user);
-  done(null, user.id);
+  return done(null, user.id);
 });
 
 //you can use the first argument to find a user in db and attached it to the req.user
 passport.deserializeUser(function (id: string, done) {
   console.log("Deserializing user by his id:", id);
-  GoogleUser.findById(id, (err, user) => done(err, user));
+  GoogleUser.findById(id, (err: any, user: any) => done(err, user));
 });
 
 passport.use(
@@ -44,10 +44,10 @@ passport.use(
       try {
         let user = await GoogleUser.findOne({ googleId: profile.id });
         if (user) {
-          done(null, user);
+          return done(null, user);
         } else {
           user = await GoogleUser.create(defaultUser);
-          done(null, user);
+          return done(null, user);
         }
       } catch (err) {
         console.error(err);

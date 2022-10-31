@@ -13,9 +13,10 @@ import { json } from "body-parser";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import authRoutes from "./routes/auth";
-import "./services/passport";
 import { expressSession } from "./services/session";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
+import expressPlayground from "graphql-playground-middleware-express";
+import "./services/passport";
 
 //config variables
 const port = process.env.PORT;
@@ -65,26 +66,24 @@ const startApolloServer = async () => {
 
   await server.start();
 
+  const corsOptions = {
+    origin: "https://studio.apollographql.com",
+    credentials: true,
+  };
+
   app.use(expressSession);
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const corsOptions = {
-    origin: ["http://localhost:3000", "https://studio.apollographql.com"],
-    methods: "GET, POST, PUT, DELETE",
-    credentials: true,
-  };
-
-  app.use(cors(corsOptions));
-
   app.use(
     "/graphql",
-    // isLoggedIn,
-    // cors<cors.CorsRequest>(corsOptions),
+    cors<cors.CorsRequest>(corsOptions),
     json(),
     cookieParser(),
     expressMiddleware(server, {
       context: async ({ req, res }: any) => {
+        // console.log(req.session);
+        // console.log(req.user);
         return { req, res };
       },
     })
@@ -95,11 +94,14 @@ const startApolloServer = async () => {
     res.send('<a href="/auth/google">Auth with Google</a>');
   });
 
-  app.get("/protected", isAuthenticated, (req, res) => {
+  app.get("/test", isAuthenticated, (req, res) => {
+    console.log(req.user);
     res.send("Congrats, you are authenticated");
   });
 
   app.use("/auth", authRoutes);
+
+  app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
   await new Promise<void>((resolve) => httpServer.listen({ port }, resolve));
   console.log(`🚀 Server ready at ${host}:${port}/graphql`);
