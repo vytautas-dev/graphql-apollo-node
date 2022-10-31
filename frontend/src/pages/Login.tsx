@@ -50,7 +50,6 @@ function Login() {
   if (!user) {
     return (
       <>
-        <h1>Log in!!</h1>
         <button>
           <GoogleButton onClick={redirectToGoogleSSO} />
         </button>
