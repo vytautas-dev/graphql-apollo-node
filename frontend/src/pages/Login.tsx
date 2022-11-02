@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import useAuth from "../hooks/useAuth";
 import { TUser } from "../types/User";
 import axios from "axios";
 import GoogleButton from "react-google-button";
+import { Link } from "react-router-dom";
 
 function Login() {
-  const [user, setUser] = useState<TUser>();
+  const { auth, setAuth }: any = useAuth();
+
+  console.log("login component: ", auth.user);
 
   const fetchAuthUser = async () => {
     const config = {
@@ -23,7 +27,8 @@ function Login() {
       );
       if (response && response.data) {
         console.log("You are authenticated! User: ", response.data);
-        setUser(response.data);
+        setAuth({ user: response.data });
+        localStorage.setItem("user", JSON.stringify({ user: response.data }));
       }
     } catch (err) {
       console.log("Not properly authenticated", err);
@@ -47,7 +52,7 @@ function Login() {
       }, 500);
     }
   };
-  if (!user) {
+  if (!auth.user) {
     return (
       <>
         <button>
@@ -56,7 +61,30 @@ function Login() {
       </>
     );
   } else {
-    return <h1>Hello {user.username} You are in!</h1>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "30px",
+          alignItems: "center",
+        }}
+      >
+        <h1>Hello {auth.user.username} You are in!</h1>
+        <button className="btn" style={{ width: "50%" }}>
+          <Link
+            to="/calendar"
+            style={{
+              textDecoration: "none",
+              color: "#fff",
+              fontSize: "20px",
+            }}
+          >
+            GO TO CALENDAR
+          </Link>
+        </button>
+      </div>
+    );
   }
 }
 

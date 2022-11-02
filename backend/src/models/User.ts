@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import bcrypt from "bcryptjs";
 import { IUser } from "../types/types";
 
 const UserSchema: Schema = new Schema<IUser>(
@@ -16,16 +15,10 @@ const UserSchema: Schema = new Schema<IUser>(
       trim: true,
       unique: true,
     },
-    password: { type: String, required: true },
+    googleId: { type: String, required: true },
     isAdmin: { type: Boolean, default: false, required: true },
   },
   { timestamps: true }
 );
-
-UserSchema.pre("save", async function () {
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(this.password, salt);
-  this.password = hashedPassword;
-});
 
 export default mongoose.model<IUser>("User", UserSchema);

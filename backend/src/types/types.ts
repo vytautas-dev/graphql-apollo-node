@@ -4,21 +4,15 @@ export interface IUser extends Document {
   _id: Types.ObjectId;
   username: string;
   email: string;
-  password: string;
-  isAdmin: boolean;
-}
-
-export interface IGoogleUser extends Document {
-  _id: Types.ObjectId;
-  username: string;
-  email: string;
   googleId: string;
   isAdmin: boolean;
 }
 
 export interface IEvent {
   summary: string;
-  organizer: string;
+  organizer: {
+    email: string;
+  };
   start: {
     dateTime: string;
     timeZone: string;

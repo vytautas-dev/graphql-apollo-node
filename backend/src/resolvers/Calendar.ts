@@ -1,16 +1,15 @@
 import { google } from "googleapis";
-import { IEventInput } from "../types/types";
+import { IEventInput, IEvent } from "../types/types";
 import { loadClientAuth } from "../services/oAuthClient";
 
 export const calendarResolvers = {
   Event: {
-    organizer: (event) => event.organizer.email,
-    start: (event) => event.start.dateTime,
-    end: (event) => event.end.dateTime,
+    organizer: (event: IEvent) => event.organizer.email,
+    start: (event: IEvent) => event.start.dateTime,
+    end: (event: IEvent) => event.end.dateTime,
   },
   Query: {
-    async calendarEvents<T>(parent: T, args: any, { req }: any) {
-      console.log(req.session);
+    async calendarEvents<T>(parent: T, args: IEventInput) {
       const oauth2Client = await loadClientAuth();
       const calendar = google.calendar({ version: "v3", auth: oauth2Client });
       const response = await calendar.events.list({
@@ -26,7 +25,7 @@ export const calendarResolvers = {
     },
   },
   Mutation: {
-    async addEvent<T>(parent: T, { eventInput }: IEventInput) {
+    addEvent: async function <T>(parent: T, { eventInput }: IEventInput) {
       const { summary, organizer, start, end, status, hangoutLink } =
         eventInput;
 
@@ -56,7 +55,7 @@ export const calendarResolvers = {
           resource: event,
           visibility: "public",
         },
-        function (err, event) {
+        function (err: any, event: any) {
           if (err) {
             console.log(
               "There was an error contacting the Calendar service: " + err

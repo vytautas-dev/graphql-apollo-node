@@ -2,7 +2,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import passport from "passport";
 import "dotenv/config";
 import Settings from "../models/Settings";
-import GoogleUser from "../models/GoogleUser";
+import User from "../models/User";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -17,7 +17,7 @@ passport.serializeUser(function (user: any, done) {
 //you can use the first argument to find a user in db and attached it to the req.user
 passport.deserializeUser(function (id: string, done) {
   console.log("Deserializing user by his id:", id);
-  GoogleUser.findById(id, (err: any, user: any) => done(err, user));
+  User.findById(id, (err: any, user: any) => done(err, user));
 });
 
 passport.use(
@@ -42,11 +42,11 @@ passport.use(
       };
 
       try {
-        let user = await GoogleUser.findOne({ googleId: profile.id });
+        let user = await User.findOne({ googleId: profile.id });
         if (user) {
           return done(null, user);
         } else {
-          user = await GoogleUser.create(defaultUser);
+          user = await User.create(defaultUser);
           return done(null, user);
         }
       } catch (err) {

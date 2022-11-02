@@ -1,8 +1,10 @@
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { expressMiddleware } from "@apollo/server/express4";
-import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
 import { ApolloServer } from "@apollo/server";
+import expressPlayground from "graphql-playground-middleware-express";
+import { useServer } from "graphql-ws/lib/use/ws";
+import { WebSocketServer } from "ws";
+
 import express from "express";
 import http from "http";
 import cors from "cors";
@@ -15,10 +17,9 @@ import passport from "passport";
 import authRoutes from "./routes/auth";
 import { expressSession } from "./services/session";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
-import expressPlayground from "graphql-playground-middleware-express";
 import "./services/passport";
 
-//config variables
+// env config variables
 const port = process.env.PORT;
 const host = process.env.HOST;
 const dbUri = process.env.DB_URI;
@@ -67,13 +68,15 @@ const startApolloServer = async () => {
   await server.start();
 
   const corsOptions = {
-    origin: "https://studio.apollographql.com",
+    origin: ["http://localhost:3000", "https://studio.apollographql.com"],
     credentials: true,
   };
 
   app.use(expressSession);
   app.use(passport.initialize());
   app.use(passport.session());
+
+  app.use(cors(corsOptions));
 
   app.use(
     "/graphql",
@@ -94,12 +97,12 @@ const startApolloServer = async () => {
     res.send('<a href="/auth/google">Auth with Google</a>');
   });
 
-  app.get("/test", isAuthenticated, (req, res) => {
+  app.use("/auth", authRoutes);
+
+  app.get("/protected", isAuthenticated, (req, res) => {
     console.log(req.user);
     res.send("Congrats, you are authenticated");
   });
-
-  app.use("/auth", authRoutes);
 
   app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 

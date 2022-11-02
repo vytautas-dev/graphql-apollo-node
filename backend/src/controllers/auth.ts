@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Request, Response } from "express";
 
-const successLoginUrl = "http://localhost:5000/graphql";
+const successLoginUrl = "http://localhost:3000/auth/success";
 const errorLoginUrl = "http://localhost:3000/auth/error";
 
 const authUser = passport.authenticate("google", {
