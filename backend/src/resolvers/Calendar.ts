@@ -9,7 +9,7 @@ export const calendarResolvers = {
     end: (event: IEvent) => event.end.dateTime,
   },
   Query: {
-    async calendarEvents<T>(parent: T, args: IEventInput) {
+    async calendarEvents<T>(parent: T, args: IEventInput, { req }) {
       const oauth2Client = await loadClientAuth();
       const calendar = google.calendar({ version: "v3", auth: oauth2Client });
       const response = await calendar.events.list({

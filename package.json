@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node_modules/.bin/ts-node-dev --poll --respawn --transpile-only backend/src/server.ts"
+    "dev": "node_modules/.bin/ts-node-dev --poll --respawn --transpile-only backend/src/server.ts",
+    "dev:producer": "node_modules/.bin/ts-node-dev --poll --respawn --transpile-only backend/kafka/producer.ts",
+    "dev:consumer": "node_modules/.bin/ts-node-dev --poll --respawn --transpile-only backend/kafka/consumer.ts"
   },
   "author": "",
   "license": "ISC",
@@ -45,6 +47,7 @@
     "graphql-subscriptions": "^2.0.0",
     "graphql-ws": "^5.11.2",
     "joi": "^17.6.3",
+    "kafkajs": "^2.2.2",
     "mongoose": "^6.6.5",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",

@@ -21,10 +21,11 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/auth/success" element={<LoginSuccess />} />
-              <Route path="/calendar" element={<Calendar />} />
 
               {/*we want to protect these routes*/}
-              <Route element={<RequireAuth />}></Route>
+              <Route element={<RequireAuth />}>
+                <Route path="/calendar" element={<Calendar />} />
+              </Route>
 
               {/*catch all */}
               <Route path="*" element={<Missing />} />

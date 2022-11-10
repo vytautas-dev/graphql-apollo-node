@@ -31,7 +31,7 @@ function Calendar() {
     console.log(error);
   }
 
-  return data.books.map(({ _id, author, title, description }: any) => (
+  return data?.books?.map(({ _id, author, title, description }: any) => (
     <div key={_id}>
       <h3>{title}</h3>
       <br />

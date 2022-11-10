@@ -1,23 +1,27 @@
+//Apollo & Graphql imports
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServer } from "@apollo/server";
+import { schema, setHttpPlugin } from "./serverSettings/config";
 import expressPlayground from "graphql-playground-middleware-express";
 import { useServer } from "graphql-ws/lib/use/ws";
 import { WebSocketServer } from "ws";
 
+//Middlewares imports
 import express from "express";
 import http from "http";
 import cors from "cors";
-import "dotenv/config";
-import mongoose from "mongoose";
-import { schema, setHttpPlugin } from "./serverSettings/config";
 import { json } from "body-parser";
 import cookieParser from "cookie-parser";
-import passport from "passport";
-import authRoutes from "./routes/auth";
 import { expressSession } from "./services/session";
-import { isAuthenticated } from "./middlewares/isAuthenticated";
+import passport from "passport";
 import "./services/passport";
+import "dotenv/config";
+import mongoose from "mongoose";
+
+//Routes imports
+import authRoutes from "./routes/auth";
+import { isAuthenticated } from "./middlewares/isAuthenticated";
 
 // env config variables
 const port = process.env.PORT;

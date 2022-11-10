@@ -15,8 +15,4 @@ declare global {
       GOOGLE_OAUTH_REDIRECT_URL: string;
     }
   }
-
-  namespace Express {
-    interface User extends IUser {}
-  }
 }
